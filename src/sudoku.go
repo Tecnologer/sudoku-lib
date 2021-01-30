@@ -85,18 +85,20 @@ func (g *Game) Solve() {
 }
 
 //Validate validates if the solutions is correct
-func (g *Game) Validate() *ValidationErrors {
+func (g *Game) Validate(checkEmpties bool) *ValidationErrors {
 	errs := new(ValidationErrors)
 	for x := 0; x < 9; x++ {
 		for y := 0; y < 9; y++ {
 			switch {
 			case g.IsEmpty(x, y):
-				errs.appendError(emptyError, NewErrorCoordinate(x, y))
-			case g.IsXValid(x, y, g.Get(x, y)):
+				if checkEmpties {
+					errs.appendError(emptyError, NewErrorCoordinate(x, y))
+				}
+			case !g.IsXValid(x, y, g.Get(x, y)):
 				errs.appendError(invalidRow, NewErrorCoordinate(x, y))
-			case g.IsYValid(x, y, g.Get(x, y)):
+			case !g.IsYValid(x, y, g.Get(x, y)):
 				errs.appendError(invalidColumn, NewErrorCoordinate(x, y))
-			case g.IsSquareValid(x, y, g.Get(x, y)):
+			case !g.IsSquareValid(x, y, g.Get(x, y)):
 				errs.appendError(invalidSquare, NewErrorCoordinate(x, y))
 			}
 		}
@@ -147,8 +149,8 @@ func (g *Game) IsCoordinateLockedXY(x, y int) bool {
 
 //IsCoordinateLocked returns if the coordinate x,y is locked
 func (g *Game) IsCoordinateLocked(c *Coordinate) bool {
-	for _, c := range g.LockedCoord {
-		if c.Equals(c) {
+	for _, lc := range g.LockedCoord {
+		if lc.Equals(c) {
 			return true
 		}
 	}
