@@ -155,11 +155,13 @@ func (b *board) isSquareValid(x, y, v int) bool {
 
 	for i := 0; i < 3; i++ {
 		for j := 0; j < 3; j++ {
-			if i == x && j == y {
+			x1 := i + xOffset
+			y1 := j + yOffset
+			if x1 == x && y1 == y {
 				continue
 			}
 
-			if b[i+xOffset][j+yOffset] == v {
+			if b[x1][y1] == v {
 				return false
 			}
 		}
